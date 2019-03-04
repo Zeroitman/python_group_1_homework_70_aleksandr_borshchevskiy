@@ -3,30 +3,40 @@ from rest_framework import serializers
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='api_v1:category-detail')
+
     class Meta:
         model = Category
-        fields = ('id', 'name', 'description')
+        fields = ('url', 'id', 'name', 'description')
 
 
 class MovieSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='api_v1:movie-detail')
+
     class Meta:
         model = Movie
-        fields = ('id', 'name', 'description', 'poster', 'release_date', 'finish_date', 'categories')
+        fields = ('url', 'id', 'name', 'description', 'poster', 'release_date', 'finish_date', 'categories')
 
 
 class HallSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='api_v1:hall-detail')
+
     class Meta:
         model = Hall
-        fields = ('id', 'name', 'description')
+        fields = ('url', 'id', 'name', 'description')
 
 
 class SeatSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='api_v1:seat-detail')
+
     class Meta:
         model = Seat
-        fields = ('id', 'row', 'seat', 'hall')
+        fields = ('url', 'id', 'row', 'seat', 'hall')
 
 
 class ShowSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='api_v1:show-detail')
+
     class Meta:
         model = Show
-        fields = ('id', 'movie', 'hall', 'starts_at', 'ends_at')
+        fields = ('url', 'id', 'movie', 'hall', 'starts_at', 'ends_at')
