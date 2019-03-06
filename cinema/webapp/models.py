@@ -90,6 +90,8 @@ BOOKING_STATUS_CHOICES = [
 
 
 class Book(models.Model):
+    # значение по умолчанию - метод generate_code, который генерирует случайный код из 6 цифр
+    # свойство unique_for_date делает это поле уникальным в пределах даты, указанной в поле created_at
     code = models.CharField(max_length=10, unique_for_date='created_at', default=generate_code, editable=False)
     show = models.ForeignKey(Show, on_delete=models.PROTECT, related_name='booking')
     seats = models.ManyToManyField(Seat, related_name='booking')
@@ -104,4 +106,4 @@ class Book(models.Model):
         seats = ""
         for seat in self.seats.all():
             seats += "R%sS%s " % (seat.row, seat.seat)
-        return seats
+        return seats.rstrip()

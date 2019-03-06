@@ -127,10 +127,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 MEDIA_URL = '/uploads/'
 
 
+# Настройки Django REST Framework хранятся в этой константе.
+# Сейчас здесь прописаны только настройки пагинации (постраничного вывода),
+# чтобы данные в списках выводились не все сразу, а по несколько объектов с переключением страниц.
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 3
+    'PAGE_SIZE': 5
 }
 
 
+# Настройка, которая отвечает за длину генерируемого кода брони
+# (в settings.py можно добавлять и собственные настройки, используемые в коде проекта).
 BOOKING_CODE_LENGTH = 6
