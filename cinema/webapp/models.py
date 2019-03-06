@@ -1,5 +1,8 @@
 from django.db import models
 from django.urls import reverse
+import random
+import string
+from django.conf import settings
 
 
 class SoftDeleteManager(models.Manager):
@@ -70,3 +73,35 @@ class Show(models.Model):
         return "%s, %s (%s - %s)" % (self.movie, self.hall,
                                      self.starts_at.strftime('%d.%m.%Y %H:%M'),
                                      self.ends_at.strftime('%d.%m.%Y %H:%M'))
+
+
+def generate_code():
+    code = ""
+    for i in range(0, settings.BOOKING_CODE_LENGTH):
+        code += random.choice(string.digits)
+    return code
+
+
+BOOKING_STATUS_CHOICES = [
+    ('created', 'Created'),
+    ('sold', 'Sold'),
+    ('canceled', 'Canceled'),
+]
+
+
+class Book(models.Model):
+    code = models.CharField(max_length=10, unique_for_date='created_at', default=generate_code, editable=False)
+    show = models.ForeignKey(Show, on_delete=models.PROTECT, related_name='booking')
+    seats = models.ManyToManyField(Seat, related_name='booking')
+    status = models.CharField(max_length=20, choices=BOOKING_STATUS_CHOICES, default='created')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "%s, %s" % (self.show, self.code)
+
+    def get_seats_display(self):
+        seats = ""
+        for seat in self.seats.all():
+            seats += "R%sS%s " % (seat.row, seat.seat)
+        return seats
