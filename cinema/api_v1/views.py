@@ -12,7 +12,7 @@ class NoAuthModelViewSet(viewsets.ModelViewSet):
 
 
 class MovieViewSet(NoAuthModelViewSet):
-    queryset = Movie.objects.active().order_by('-release_date')
+    queryset = Movie.objects.active().order_by('id')
 
     # Метод, который отвечает за то,
     # какой класс сериализатора будет использоваться при обработке запроса.
