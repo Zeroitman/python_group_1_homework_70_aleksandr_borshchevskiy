@@ -1,33 +1,44 @@
 import React, {Component} from 'react';
 import {CATEGORIES_URL, MOVIES_URL} from "../../api-urls";
 
-// Добавить Layout
-// Подключить datepicker
-// загрузить постер (файл)
-// Подключить react-select
+// из библиотеки react-datepicker
+// стили для дэйтпикера подключены в index.js! без них он не работает!
+import DatePicker from "react-datepicker";
+// из библиотеки react-select
+import Select from 'react-select';
 
 
 class MovieAdd extends Component {
     state = {
+        // фильм, который мы редактируем
         movie: {
             name: "",
             description: "",
             release_date: "",
+            finish_date: "",
             categories: []
         },
+
+        // доступные категории
         categories: [],
+
+        // сообщение об ошибке
         alert: null,
+
+        // индикатор отключения кнопки submit, если запрос выполняется
         submitDisabled: false
     };
 
 
     componentDidMount() {
+        // загружаем категории
         fetch(CATEGORIES_URL)
             .then(response => response.json())
             .then(json => {
                 console.log(json);
                 return json;
             })
+            // и сохраняем их в state
             .then(categories => this.setState(prevState => {
                 let newState = {...prevState};
                 newState.categories = categories;
@@ -36,6 +47,7 @@ class MovieAdd extends Component {
             .catch(error => console.log(error));
     }
 
+    // функция, обновляющая поля в this.state.movie
     updateMovieState = (fieldName, value) => {
         this.setState(prevState => {
             let newState = {...prevState};
@@ -46,49 +58,55 @@ class MovieAdd extends Component {
         });
     };
 
+    // обработчик ввода в поля ввода
     inputChanged = (event) => {
         const value = event.target.value;
         const fieldName = event.target.name;
         this.updateMovieState(fieldName, value);
     };
 
-    selectChanged = (event) => {
-        const value = [];
-        const fieldName = event.target.name;
-        const options = event.target.options;
-        for (let i = 0; i < options.length; i++) {
-            if (options[i].selected) value.push(+options[i].value);
-        }
-        this.updateMovieState(fieldName, value);
+    // обработчик изменения дат
+    dateChanged = (field, date) => {
+        this.updateMovieState(field, date.toISOString().slice(0, 10));
     };
 
+    // обработчик изменения select
+    selectChanged = (field, values) => {
+        const category_ids = values.map(item => item.value);
+        this.updateMovieState(field, category_ids);
+    };
+
+    // обработчик отправки формы
     formSubmitted = (event) => {
         event.preventDefault();
-        console.log(this.state);
-        const data = JSON.stringify(this.state.movie);
-        const headers = new Headers({
-            'Content-Type': 'application/json',
-            'Content-Length': data.length
-        });
+
+        // на время
         this.setState(prevState => {
             let newState = {...prevState};
             newState.submitDisabled = true;
             return newState;
         });
-        fetch(MOVIES_URL, {method: 'POST', body: data, headers})
-            .then(response => response.json())
-            .then(json => {
-                console.log(json);
-                return json;
-            })
-            .then(movie => this.setState(prevState => {
-                // let newState = {...prevState};
-                // newState.alert = {type: 'success', message: `Movie ${movie.name} successfully added!`};
-                // newState.submitDisabled = false;
-                // return newState;
 
-                this.props.history.replace('/movies/' + movie.id);
-            }))
+        // данные для запроса в виде JSON-строки (в axios это не нужно)
+        const data = JSON.stringify(this.state.movie);
+
+        // заголовки запроса (в axios это не нужно)
+        const headers = new Headers({
+            'Content-Type': 'application/json',
+            'Content-Length': data.length
+        });
+
+        // отправка запроса
+        fetch(MOVIES_URL, {method: 'POST', headers: headers, body: data})
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Movie was not created');
+            })
+            // если всё успешно, переходим на просмотр страницы фильма с id,
+            // указанным в ответе
+            .then(movie => this.props.history.replace('/movies/' + movie.id))
             .catch(error => {
                 console.log(error);
                 this.setState(prevState => {
@@ -101,11 +119,23 @@ class MovieAdd extends Component {
     };
 
     render() {
-        const {name, description, release_date, categories} = this.state.movie;
+        // распаковка данных фильма, чтобы было удобнее к ним обращаться
+        const {name, description, release_date, finish_date} = this.state.movie;
+
+        // создание разметки для алерта, если он есть
         let alert = null;
         if (this.state.alert) {
             alert = <div className={"alert alert-" + this.state.alert.type}>{this.state.alert.message}</div>
         }
+
+        // форматирование дат для DatePicker'ов
+        const release_date_selected = release_date ? new Date(release_date) : null;
+        const finish_date_selected = finish_date ? new Date(finish_date) : null;
+
+        // сборка опций для селекта с категориями.
+        const select_options = this.state.categories.map(category => {
+            return {value: category.id, label: category.name}
+        });
 
         return <div>
             {alert}
@@ -121,19 +151,25 @@ class MovieAdd extends Component {
                 </div>
                 <div className="form-group">
                     <label className="font-weight-bold">Дата выхода</label>
-                    <input type="text" className="form-control" name="release_date" value={release_date}
-                           onChange={this.inputChanged}/>
+                    <div>
+                        <DatePicker dateFormat="yyyy-MM-dd" selected={release_date_selected} className="form-control"
+                                    name="release_date" onChange={(date) => this.dateChanged('release_date', date)}/>
+                    </div>
+                </div>
+                <div className="form-group">
+                    <label>Дата завершения проката</label>
+                    <div>
+                        <DatePicker dateFormat="yyyy-MM-dd" selected={finish_date_selected} className="form-control"
+                                    name="finish_date" onChange={(date) => this.dateChanged('finish_date', date)}/>
+                    </div>
                 </div>
                 <div className="form-group">
                     <label>Категории</label>
-                    <select multiple onChange={this.selectChanged} name="categories">
-                        {this.state.categories.map(category => {
-                            return <option value={category.id}
-                                           selected={category.id in categories}>{category.name}</option>
-                        })}
-                    </select>
+                    <Select options={select_options} isMulti={true} name='categories'
+                            onChange={(values) => this.selectChanged('categories', values)}/>
                 </div>
-                <button disabled={this.state.submitDisabled} type="submit" className="btn btn-primary">Сохранить</button>
+                <button disabled={this.state.submitDisabled} type="submit"
+                        className="btn btn-primary">Сохранить</button>
             </form>
         </div>;
     }
