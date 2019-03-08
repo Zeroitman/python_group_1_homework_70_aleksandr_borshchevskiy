@@ -7,6 +7,8 @@ import DatePicker from "react-datepicker";
 // из библиотеки react-select
 import Select from 'react-select';
 
+import axios from 'axios';
+
 
 class MovieAdd extends Component {
     state = {
@@ -32,12 +34,8 @@ class MovieAdd extends Component {
 
     componentDidMount() {
         // загружаем категории
-        fetch(CATEGORIES_URL)
-            .then(response => response.json())
-            .then(json => {
-                console.log(json);
-                return json;
-            })
+        axios.get(CATEGORIES_URL)
+            .then(response => {console.log(response.data); return response.data})
             // и сохраняем их в state
             .then(categories => this.setState(prevState => {
                 let newState = {...prevState};
@@ -80,28 +78,18 @@ class MovieAdd extends Component {
     formSubmitted = (event) => {
         event.preventDefault();
 
-        // на время
+        // блокировка отправки формы на время выполнения запроса
         this.setState(prevState => {
             let newState = {...prevState};
             newState.submitDisabled = true;
             return newState;
         });
 
-        // данные для запроса в виде JSON-строки (в axios это не нужно)
-        const data = JSON.stringify(this.state.movie);
-
-        // заголовки запроса (в axios это не нужно)
-        const headers = new Headers({
-            'Content-Type': 'application/json',
-            'Content-Length': data.length
-        });
-
         // отправка запроса
-        fetch(MOVIES_URL, {method: 'POST', headers: headers, body: data})
+        axios.post(MOVIES_URL, this.state.movie)
             .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
+                console.log(response.data);
+                if (response.status === 201) return response.data;
                 throw new Error('Movie was not created');
             })
             // если всё успешно, переходим на просмотр страницы фильма с id,

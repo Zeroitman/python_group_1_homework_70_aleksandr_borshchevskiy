@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {MOVIES_URL} from "../../api-urls";
 import {NavLink} from "react-router-dom";
 import MovieCategories from "../../components/MovieCategories/MovieCategories";
+import axios from 'axios';
 
 
 // компонент, который выводит одну карточку с фильмом
@@ -19,12 +20,8 @@ class MovieDetail extends Component {
 
         // match.params - переменные из пути (:id)
         // match.params.id - значение переменной, обозначенной :id в свойстве path Route-а.
-        fetch(MOVIES_URL + match.params.id)
-            .then(response => response.json())
-            .then(json => {
-                console.log(json);
-                return json;
-            })
+        axios.get(MOVIES_URL + match.params.id)
+            .then(response => {console.log(response.data); return response.data;})
             .then(movie => this.setState({movie}))
             .catch(error => console.log(error));
     }

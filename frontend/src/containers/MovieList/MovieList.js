@@ -2,6 +2,7 @@ import React, {Fragment, Component} from 'react'
 import {MOVIES_URL} from "../../api-urls";
 import MovieCard from "../../components/MovieCard/MovieCard";
 import {NavLink} from "react-router-dom";
+import axios from 'axios';
 
 
 // компонент для показа списка фильмов клиенту
@@ -12,15 +13,8 @@ class MovieList extends Component {
     };
 
     componentDidMount() {
-        fetch(MOVIES_URL)
-            .then(response => response.json())
-            .then(json => {
-                console.log(json);
-                // для пагинации
-                // return json.results;
-                // без пагинации
-                return json;
-            })
+        axios.get(MOVIES_URL)
+            .then(response => {console.log(response.data); return response.data;})
             .then(movies => this.setState({movies}))
             .catch(error => console.log(error));
     }
