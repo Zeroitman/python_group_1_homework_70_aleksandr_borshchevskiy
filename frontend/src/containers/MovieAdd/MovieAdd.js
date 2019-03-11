@@ -18,8 +18,11 @@ class MovieAdd extends Component {
             description: "",
             release_date: "",
             finish_date: "",
+            poster: null,
             categories: []
         },
+
+        fileName: "",
 
         // доступные категории
         categories: [],
@@ -74,6 +77,18 @@ class MovieAdd extends Component {
         this.updateMovieState(field, category_ids);
     };
 
+    fileChanged = (event) => {
+        const fileName = event.target.value;
+        const fieldName = event.target.name;
+        const fileObject = event.target.files.length > 0 ? event.target.files[0] : null;
+        this.updateMovieState(fieldName, fileObject);
+        this.setState(prevState => {
+            let newState = {...prevState};
+            newState.fileName = fileName;
+            return newState;
+        });
+    };
+
     // обработчик отправки формы
     formSubmitted = (event) => {
         event.preventDefault();
@@ -85,8 +100,18 @@ class MovieAdd extends Component {
             return newState;
         });
 
+        let formData = new FormData();
+        Object.keys(this.state.movie).forEach(key => {
+            const value = this.state.movie[key];
+            if(value && value.toString() !== "") {
+                formData.append(key, this.state.movie[key]);
+            }
+        });
+
         // отправка запроса
-        axios.post(MOVIES_URL, this.state.movie)
+        axios.post(MOVIES_URL, formData, {
+            headers: {'Content-Type': 'multipart/form-data'}
+        })
             .then(response => {
                 console.log(response.data);
                 if (response.status === 201) return response.data;
@@ -97,6 +122,7 @@ class MovieAdd extends Component {
             .then(movie => this.props.history.replace('/movies/' + movie.id))
             .catch(error => {
                 console.log(error);
+                console.log(error.response);
                 this.setState(prevState => {
                     let newState = {...prevState};
                     newState.alert = {type: 'danger', message: `Movie was not added!`};
@@ -149,6 +175,12 @@ class MovieAdd extends Component {
                     <div>
                         <DatePicker dateFormat="yyyy-MM-dd" selected={finish_date_selected} className="form-control"
                                     name="finish_date" onChange={(date) => this.dateChanged('finish_date', date)}/>
+                    </div>
+                </div>
+                <div className="form-group">
+                    <label>Постер</label>
+                    <div>
+                        <input type="file" name="poster" value={this.state.fileName} onChange={this.fileChanged}/>
                     </div>
                 </div>
                 <div className="form-group">
