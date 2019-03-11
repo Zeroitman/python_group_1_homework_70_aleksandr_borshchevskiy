@@ -1,14 +1,37 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component, Fragment} from 'react'
+import axios from "axios";
 import {MOVIES_URL} from "../../api-urls";
-import axios from 'axios';
 import MovieForm from "../../components/MovieForm/MovieForm";
 
 
-class MovieAdd extends Component {
+class MovieEdit extends Component {
     state = {
+        // исходные данные фильма, загруженные из API.
+        movie: null,
+
         // сообщение об ошибке
         alert: null,
     };
+
+    componentDidMount() {
+        // match.params - переменные из пути к этому компоненту
+        // match.params.id - значение переменной, обозначенной :id в свойстве path Route-а.
+        axios.get(MOVIES_URL + this.props.match.params.id)
+            .then(response => {
+                const movie = response.data;
+                console.log(movie);
+                this.setState(prevState => {
+                    const newState = {...prevState};
+                    newState.movie = movie;
+                    newState.movie.categories = movie.categories.map(category => category.id);
+                    return newState;
+                });
+            })
+            .catch(error => {
+                console.log(error);
+                console.log(error.response);
+            });
+    }
 
     // вывод сообщение об ошибке
     showErrorAlert = (error) => {
@@ -43,7 +66,7 @@ class MovieAdd extends Component {
         const formData = this.gatherFormData(movie);
 
         // отправка запроса
-        return axios.post(MOVIES_URL, formData, {
+        return axios.put(MOVIES_URL + this.props.match.params.id + '/', formData, {
             headers: {'Content-Type': 'multipart/form-data'}
         })
             .then(response => {
@@ -65,13 +88,13 @@ class MovieAdd extends Component {
     };
 
     render() {
-        const alert = this.state.alert;
+        const {alert, movie} = this.state;
         return <Fragment>
             {alert ? <div className={"mb-2 alert alert-" + alert.type}>{alert.message}</div> : null}
-            <MovieForm onSubmit={this.formSubmitted}/>
+            {movie ? <MovieForm onSubmit={this.formSubmitted} movie={movie}/> : null}
         </Fragment>
     }
 }
 
 
-export default MovieAdd;
+export default MovieEdit

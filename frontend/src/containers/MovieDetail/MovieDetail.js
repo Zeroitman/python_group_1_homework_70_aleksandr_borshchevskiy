@@ -31,7 +31,7 @@ class MovieDetail extends Component {
         if (!this.state.movie) return null;
 
         // достаём данные из movie
-        const {name, poster, description, release_date, finish_date, categories} = this.state.movie;
+        const {name, poster, description, release_date, finish_date, categories, id} = this.state.movie;
 
         return <div>
             {/* постер, если есть */}
@@ -48,6 +48,9 @@ class MovieDetail extends Component {
             {/* даты проката c: по: (если указано)*/}
             <p className="text-secondary">В прокате c: {release_date} до: {finish_date ? finish_date : "Неизвестно"}</p>
             {description ? <p>{description}</p> : null}
+
+            {/* редактировать фильм */}
+            <NavLink to={'/movies/' + id + '/edit'} className="btn btn-primary mr-2">Edit</NavLink>
 
             {/* назад */}
             <NavLink to='' className="btn btn-primary">Movies</NavLink>
