@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
     'rest_framework',
     'corsheaders',
     'webapp',
@@ -133,11 +134,16 @@ MEDIA_URL = '/uploads/'
 # Сейчас здесь прописаны только настройки пагинации (постраничного вывода),
 # чтобы данные в списках выводились не все сразу, а по несколько объектов с переключением страниц.
 
-# временно отключаем пагнацию, чтобы видеть в списке на фронтенде все фильмы.
-# REST_FRAMEWORK = {
-#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-#     'PAGE_SIZE': 5
-# }
+REST_FRAMEWORK = {
+    # настройки для пагинации
+    # временно отключена, чтобы видеть в списке на фронтенде все фильмы.
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 5
+
+    # настройка, чтобы использовать фильтры django_filters во всех ViewSet
+    # отключена, т.к. сейчас для фильтрации используется метод get_queryset.
+    # 'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend',]
+}
 
 
 # Настройка, которая отвечает за длину генерируемого кода брони

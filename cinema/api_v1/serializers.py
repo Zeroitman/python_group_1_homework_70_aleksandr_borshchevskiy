@@ -68,4 +68,4 @@ class ShowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Show
-        fields = ('url', 'id', 'movie', 'movie_url', 'hall', 'hall_url', 'starts_at', 'ends_at')
+        fields = ('url', 'id', 'movie', 'movie_url', 'hall', 'hall_url', 'starts_at', 'ends_at', 'ticket_price')
