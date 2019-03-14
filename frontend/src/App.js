@@ -6,12 +6,13 @@ import MovieList from "./containers/MovieList/MovieList";
 import MovieDetail from "./containers/MovieDetail/MovieDetail";
 import MovieAdd from "./containers/MovieAdd/MovieAdd";
 import MovieEdit from "./containers/MovieEdit/MovieEdit";
+import Layout from "./components/Layout/Layout";
 
 class App extends Component {
     render() {
         return (
-            <div className="container">
-                <BrowserRouter>
+            <BrowserRouter>
+                <Layout>
                     <Switch>
                         <Route path="/movies/add" component={MovieAdd}/>
                         {/* :id обозначает переменную id */}
@@ -19,8 +20,8 @@ class App extends Component {
                         <Route path="/movies/:id" component={MovieDetail}/>
                         <Route path="/" component={MovieList}/>
                     </Switch>
-                </BrowserRouter>
-            </div>
+                </Layout>
+            </BrowserRouter>
         );
     }
 }
