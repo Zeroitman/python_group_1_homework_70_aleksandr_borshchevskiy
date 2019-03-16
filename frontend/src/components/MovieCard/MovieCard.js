@@ -5,10 +5,8 @@ import Card from "../UI/Card/Card";
 // Компонент, который рисует карточку для фильма: постер, название и ссылку,
 // используя компонент UI/Card (карточка), основанный на стилях bootstrap.
 const MovieCard = props => {
-    const {movie, className} = props;
-
     // достаём данные из movie
-    const {name, poster, id} = movie;
+    const {name, poster, id} = props.movie;
 
     // создаём объект с данными (текстом и url) для ссылки
     const link = {

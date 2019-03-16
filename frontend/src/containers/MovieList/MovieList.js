@@ -1,7 +1,6 @@
 import React, {Fragment, Component} from 'react'
 import {MOVIES_URL} from "../../api-urls";
 import MovieCard from "../../components/MovieCard/MovieCard";
-import {NavLink} from "react-router-dom";
 import axios from 'axios';
 
 
