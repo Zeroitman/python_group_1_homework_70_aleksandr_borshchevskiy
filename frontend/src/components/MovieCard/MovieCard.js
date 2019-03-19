@@ -1,5 +1,5 @@
 import React from 'react';
-import Card from "../UI/Card/Card";
+import Card from "../Card/Card";
 
 
 // Компонент, который рисует карточку для фильма: постер, название и ссылку,
@@ -10,12 +10,12 @@ const MovieCard = props => {
 
     // создаём объект с данными (текстом и url) для ссылки
     const link = {
-        text: 'Read more',
+        text: 'Подробнее',
         url: '/movies/' + id
     };
 
     // возвращаем (рисуем) карточку с данными из movie и ссылкой.
-    return <Card header={name} image={poster} link={link} className='h-100'/>;
+    return <Card header={name} image={poster} link={link}/>;
 };
 
 

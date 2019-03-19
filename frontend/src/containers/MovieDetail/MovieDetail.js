@@ -65,6 +65,10 @@ class MovieDetail extends Component {
         });
     };
 
+    deleteMovie = (id) => {
+        axios.delete('movies/' + id).then(this.props.history.replace('/'))
+    };
+
     render() {
         // если movie в state нет, ничего не рисуем.
         if (!this.state.movie) return null;
@@ -73,25 +77,27 @@ class MovieDetail extends Component {
         const {name, poster, description, release_date, finish_date, categories, id} = this.state.movie;
 
         return <div className="mt-3">
-            {/* постер, если есть */}
-            {poster ? <div className='text-center'>
-                <img className="img-fluid rounded" src={poster} alt={"постер"}/>
-            </div> : null}
-
-            {/* название фильма */}
-            <h1>{name}</h1>
-
-            {/* категории, если указаны */}
-            {categories.length > 0 ? <MovieCategories categories={categories}/> : null}
-
-            {/* даты проката c: по: (если указано)*/}
-            <p className="text-secondary">В прокате c: {release_date} до: {finish_date ? finish_date : "Неизвестно"}</p>
-            {description ? <p>{description}</p> : null}
-
-            {/* редактировать фильм */}
-            <NavLink to={'/movies/' + id + '/edit'} className="btn btn-primary px-2 py-0">Edit</NavLink>
-
-            {this.state.shows ? <ShowSchedule shows={this.state.shows}/> : null}
+            <div className="d-flex justify-content-center">
+                <div className="mr-5">
+                    {poster ? <div className='text-center'>
+                        <img className="img-fluid rounded" src={poster} alt={"постер"}/>
+                    </div> : null}
+                </div>
+                <div className="ml-5 text-center">
+                    <h1>{name}</h1>
+                    {categories.length > 0 ? <MovieCategories categories={categories}/> : null}
+                    <p className="text-secondary">
+                        В прокате c: {release_date} до: {finish_date ? finish_date : "Неизвестно"}</p>
+                    {description ? <p>{description}</p> : null}
+                    <NavLink to={'/movies/' + id + '/edit'}
+                             className="btn btn-primary px-2 py-0 m-2">Редактирование</NavLink>
+                    <button className="btn btn-primary px-2 py-0 m-2"
+                            onClick={() => this.deleteMovie(id)}
+                    >Удалить
+                    </button>
+                    {this.state.shows ? <ShowSchedule shows={this.state.shows}/> : null}
+                </div>
+            </div>
         </div>;
     }
 }

@@ -1,11 +1,9 @@
 import React, {Component} from 'react'
 import axios from "axios";
 import {CATEGORIES_URL} from "../../api-urls";
-
 // из библиотеки react-datepicker
 // стили для дэйтпикера подключены в index.js! без них он не работает!
 import DatePicker from "react-datepicker";
-
 // из библиотеки react-select
 import Select from 'react-select';
 

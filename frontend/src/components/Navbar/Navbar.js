@@ -1,14 +1,42 @@
-import React from 'react';
-import Logo from "./Logo/Logo";
-import Menu from "./Menu/Menu";
+import React, {Component} from 'react'
+import {NavLink} from "react-router-dom";
+import './Navbar.css';
 
 
-const Navbar = () => (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <Logo/>
-        <Menu/>
-    </nav>
-);
+class Navbar extends Component {
+    render() {
+        return <div className='App'>
+            <nav className="navbar navbar-expand-lg navbar-light bg-secondary">
+                <div className="container">
+                    <a className="navbar-brand" href="#">Cinema</a>
+                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="ml-5 collapse navbar-collapse" id="navbarNav">
+                        <ul className="navbar-nav">
+                            <li className="nav-item active">
+                                <NavLink to='/' className="nav-link"> Фильмы</NavLink>
+                            </li>
+                            <li className="nav-item active">
+                                <NavLink to='/halls' className="nav-link"> Залы </NavLink>
+                            </li>
+                            <li className="nav-item">
+                                <NavLink to='/movies/add' className="nav-link"> Добавить фильм </NavLink>
+                            </li>
+                            <li className="nav-item">
+                                <NavLink to='/halls/add' className="nav-link"> Добавить зал </NavLink>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <div>
+                {this.props.children}
+            </div>
+        </div>;
+    }
+}
 
 
-export default Navbar
+export default Navbar;
