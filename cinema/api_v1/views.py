@@ -1,8 +1,16 @@
 from webapp.models import Movie, Category, Hall, Seat, Show
 from rest_framework import viewsets
 from api_v1.serializers import MovieCreateSerializer, MovieDisplaySerializer, \
-    CategorySerializer, HallSerializer, SeatSerializer, ShowSerializer
-from rest_framework.permissions import IsAuthenticated
+    CategorySerializer, HallSerializer, SeatSerializer, ShowSerializer, UserSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.generics import CreateAPIView
+from django.contrib.auth.models import User
+
+
+class UserCreateView(CreateAPIView):
+    model = User
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
 
 
 # Базовый класс ViewSet, основанный на ModelViewSet,
