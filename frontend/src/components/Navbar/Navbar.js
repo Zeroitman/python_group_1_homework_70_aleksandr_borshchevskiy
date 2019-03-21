@@ -27,6 +27,15 @@ class Navbar extends Component {
                             <li className="nav-item">
                                 <NavLink to='/halls/add' className="nav-link"> Добавить зал </NavLink>
                             </li>
+                            <li className="nav-item">
+                                {localStorage.getItem('auth-token') ? null :
+                                    <NavLink to='/login' className="nav-link ml-5"> Войти </NavLink>}
+                            </li>
+                            <li className="nav-item">
+                                {localStorage.getItem('auth-token') ?
+                                    <NavLink to='/logout' className="nav-link ml-5"> Выйти </NavLink>:null
+                                }
+                            </li>
                         </ul>
                     </div>
                 </div>

@@ -11,12 +11,16 @@ import HallsList from './containers/HallsList/HallsList';
 import HallDetail from './containers/HallDetail/HallDetail';
 import HallEdit from './containers/HallEdit/HallEdit';
 import HallAdd from './containers/HallAdd/HallAdd';
+import Login from './containers/Login/Login'
+import Logout from './containers/Logout/Logout'
 class App extends Component {
     render() {
         return (
             <BrowserRouter>
                 <Layout>
                     <Switch>
+                        <Route path="/login" component={Login}/>
+                        <Route path="/logout" component={Logout}/>
                         <Route path="/halls/add" component={HallAdd}/>
                         <Route path="/halls/:id/edit" component={HallEdit}/>
                         <Route path="/halls/:id" component={HallDetail}/>
