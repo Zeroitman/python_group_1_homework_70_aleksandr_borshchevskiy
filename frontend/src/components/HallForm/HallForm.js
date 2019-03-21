@@ -4,19 +4,12 @@ class HallForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            hall: {
-                name: "",
-            },
-
+            hall: {name: "",},
             submitEnabled: true
         };
-        if(this.props.hall) {
-            this.state.hall= this.props.hall;
+        if (this.props.hall) {
+            this.state.hall = this.props.hall;
         }
-    }
-
-    componentDidMount() {
-        console.log(this.props.hall);
     }
 
 
@@ -39,9 +32,9 @@ class HallForm extends Component {
     updateHallState = (fieldName, value) => {
         this.setState(prevState => {
             let newState = {...prevState};
-            let hall = {...prevState.movie};
+            let hall = {...prevState.hall};
             hall[fieldName] = value;
-            newState.hall= hall;
+            newState.hall = hall;
             return newState;
         });
     };
@@ -52,8 +45,8 @@ class HallForm extends Component {
         this.updateHallState(fieldName, value);
     };
 
-    formSubmitted = (event) => {
-        if(this.state.submitEnabled) {
+    submitForm = (event) => {
+        if (this.state.submitEnabled) {
             event.preventDefault();
             this.disableSubmit();
             this.props.onSubmit(this.state.hall)
@@ -67,7 +60,7 @@ class HallForm extends Component {
             const submitEnabled = this.state.submitEnabled;
             return <div className="mt-3">
                 {alert}
-                <form onSubmit={this.formSubmitted}>
+                <form onSubmit={this.submitForm}>
                     <div className="form-group">
                         <label className="font-weight-bold">Название</label>
                         <input type="text" className="form-control" name="name" value={name}

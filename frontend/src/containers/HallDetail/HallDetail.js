@@ -2,67 +2,58 @@ import React, {Component} from 'react';
 import {NavLink} from "react-router-dom";
 import ShowSchedule from "../../components/ShowSchedule/ShowSchedule";
 import axios from 'axios';
+import {HALLS_URL, SHOWS_URL} from "../../api-urls";
+import moment from "moment";
 
 
 class HallDetail extends Component {
     state = {
-        HallDetail: null,
+        halls: null,
         shows: null
     };
 
     componentDidMount() {
-        this.getHall(this.props.match.params.id);
+        const match = this.props.match;
+        axios.get(HALLS_URL + match.params.id)
+            .then(response => {return response.data;})
+            .then(halls => {
+                this.setState({halls});
+                this.loadShows(halls.id);
+            })
+            .catch(error => console.log(error));
     }
 
-    getHall = (id) => {
-        axios.get('halls/' + id).then(response => {
-            return response.data
-        })
-            .then(HallDetail => {
-                this.setState({HallDetail})
+
+    loadShows = (hallId) => {
+        const startsAfter = moment().format('YYYY-MM-DD HH:mm');
+        const startsBefore = moment().add(3, 'days').format('YYYY-MM-DD');
+        const query = encodeURI(`hall_id=${hallId}&starts_after=${startsAfter}&starts_before=${startsBefore}`);
+        axios.get(`${SHOWS_URL}?${query}`).then(response => {
+            this.setState(prevState => {
+                let newState = {...prevState};
+                newState.shows = response.data;
+                return newState;
             })
-            .catch(error => {
-                console.log(error)
-            });
-        const showsUrl = this.composeUrl(id);
-        this.getShows(showsUrl)
+        }).catch(error => {
+            console.log(error);
+            console.log(error.response);
+        });
     };
 
-
-    composeUrl = (id) => {
-        const start_date = new Date();
-        const end_date = new Date();
-        end_date.setDate(start_date.getDate() + 3);
-        const start = start_date.toISOString().slice(0, 10);
-        const end = end_date.toISOString().slice(0, 10);
-        return 'shows/?hall_id=' + id + '&starts_after=' + start + '&starts_before=' + end;
-    };
-
-    getShows = (showsUrl) => {
-        axios.get(showsUrl).then(response => {
-            return response.data
-        })
-            .then(shows => {
-                this.setState({shows})
-            })
-            .catch(error => {
-                console.log(error)
-            })
-    };
 
     deleteHall = (id) => {
         axios.delete('halls/' + id, {
             headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Token ' + localStorage.getItem('auth-token')
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('auth-token')
             }
         }).then(this.props.history.replace('/'))
     };
 
 
     render() {
-        if (!this.state.HallDetail) return null;
-        const {name, id} = this.state.HallDetail;
+        if (!this.state.halls) return null;
+        const {name, id} = this.state.halls;
         return (
             <div className="card mt-3 text-center">
                 <div className="card-header h1">{name}</div>
@@ -70,7 +61,7 @@ class HallDetail extends Component {
                     <NavLink to={'/halls/' + id + '/edit'} className="btn btn-primary px-2 py-0 m-2"
                     >Редактировать</NavLink>
                     {localStorage.getItem('auth-token') ? <button className="btn btn-danger px-2 py-0 m-2"
-                                onClick={() => this.deleteHall(id)}>Удалить</button>: null}
+                                                                  onClick={() => this.deleteHall(id)}>Удалить</button> : null}
                 </div>
                 {this.state.shows ? <ShowSchedule shows={this.state.shows} movie={true} hall={false}/> : null}
             </div>
