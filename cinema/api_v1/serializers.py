@@ -68,13 +68,16 @@ class ShowSerializer(serializers.ModelSerializer):
 
     # SerializerMethodField - поле, которое получает данные из метода сериализатора
     hall_name = serializers.SerializerMethodField(read_only=True, source='hall')
-
+    movie_name = serializers.SerializerMethodField(read_only=True, source='movie')
     # имя метода должно быть get_ + название поля (hall_name -> get_hall_name())
     # метод принимает один аргумент - сериализуемый объект (в данном случае - сеанс).
     def get_hall_name(self, show):
         return show.hall.name
 
+    def get_movie_name(self, show):
+        return show.movie.name
+
     class Meta:
         model = Show
         fields = ('url', 'id', 'movie', 'movie_url', 'hall', 'hall_url',
-                  'starts_at', 'ends_at', 'ticket_price', 'hall_name')
+                  'starts_at', 'ends_at', 'ticket_price', 'hall_name', 'movie_name')

@@ -8,13 +8,18 @@ import MovieAdd from "./containers/MovieAdd/MovieAdd";
 import MovieEdit from "./containers/MovieEdit/MovieEdit";
 import Layout from "./components/Layout/Layout";
 import HallsList from './containers/HallsList/HallsList';
-
+import HallDetail from './containers/HallDetail/HallDetail';
+import HallEdit from './containers/HallEdit/HallEdit';
+import HallAdd from './containers/HallAdd/HallAdd';
 class App extends Component {
     render() {
         return (
             <BrowserRouter>
                 <Layout>
                     <Switch>
+                        <Route path="/halls/add" component={HallAdd}/>
+                        <Route path="/halls/:id/edit" component={HallEdit}/>
+                        <Route path="/halls/:id" component={HallDetail}/>
                         <Route path="/halls" exact component={HallsList}/>
                         <Route path="/movies/add" component={MovieAdd}/>
                         <Route path="/movies/:id/edit" component={MovieEdit}/>

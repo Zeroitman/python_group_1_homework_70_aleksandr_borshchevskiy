@@ -182,7 +182,7 @@ class MovieForm extends Component {
 
             return <div>
                 <form onSubmit={this.submitForm}>
-                    <div className="form-group">
+                    <div className="form-group mt-3">
                         <label className="font-weight-bold">Название</label>
                         <input type="text" className="form-control" name="name" value={name}
                                onChange={this.inputChanged}/>

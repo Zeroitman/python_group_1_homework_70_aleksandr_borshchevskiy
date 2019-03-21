@@ -80,18 +80,18 @@ class MovieDetail extends Component {
             <div className="d-flex justify-content-center">
                 <div className="mr-5">
                     {poster ? <div className='text-center'>
-                        <img className="img-fluid rounded" src={poster} alt={"постер"}/>
+                        <img className="img-fluid rounded" src={poster} alt={"постер"} width="1200px" height="1200px"/>
                     </div> : null}
                 </div>
-                <div className="ml-5 text-center">
+                <div className="text-center">
                     <h1>{name}</h1>
                     {categories.length > 0 ? <MovieCategories categories={categories}/> : null}
                     <p className="text-secondary">
                         В прокате c: {release_date} до: {finish_date ? finish_date : "Неизвестно"}</p>
-                    {description ? <p>{description}</p> : null}
+                    {description ? <div className="text-left">{description}</div> : null}
                     <NavLink to={'/movies/' + id + '/edit'}
                              className="btn btn-primary px-2 py-0 m-2">Редактирование</NavLink>
-                    <button className="btn btn-primary px-2 py-0 m-2"
+                    <button className="btn btn-danger px-2 py-0 m-2"
                             onClick={() => this.deleteMovie(id)}
                     >Удалить
                     </button>

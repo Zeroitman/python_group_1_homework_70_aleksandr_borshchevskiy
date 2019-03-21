@@ -14,7 +14,7 @@ class MovieAdd extends Component {
     showErrorAlert = (error) => {
         this.setState(prevState => {
             let newState = {...prevState};
-            newState.alert = {type: 'danger', message: `Movie was not added!`};
+            newState.alert = {type: 'danger', message: `Фильм не добавлен!`};
             return newState;
         });
     };
