@@ -10,11 +10,20 @@ class HallDetail extends Component {
         shows: null
     };
 
-    componentDidMount() {this.getHall(this.props.match.params.id);}
+    componentDidMount() {
+        this.getHall(this.props.match.params.id);
+    }
 
-    getHall = (id) => {axios.get('halls/' + id).then(response => {return response.data})
-            .then(HallDetail => {this.setState({HallDetail})})
-            .catch(error => {console.log(error)});
+    getHall = (id) => {
+        axios.get('halls/' + id).then(response => {
+            return response.data
+        })
+            .then(HallDetail => {
+                this.setState({HallDetail})
+            })
+            .catch(error => {
+                console.log(error)
+            });
         const showsUrl = this.composeUrl(id);
         this.getShows(showsUrl)
     };
@@ -30,11 +39,25 @@ class HallDetail extends Component {
     };
 
     getShows = (showsUrl) => {
-        axios.get(showsUrl).then(response => {return response.data})
-            .then(shows => {this.setState({shows})})
-            .catch(error => {console.log(error)})};
+        axios.get(showsUrl).then(response => {
+            return response.data
+        })
+            .then(shows => {
+                this.setState({shows})
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    };
 
-    deleteHall = (id) => {axios.delete('halls/' + id).then(this.props.history.replace('/halls/'))};
+    deleteHall = (id) => {
+        axios.delete('halls/' + id, {
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + localStorage.getItem('auth-token')
+            }
+        }).then(this.props.history.replace('/'))
+    };
 
 
     render() {
@@ -46,9 +69,8 @@ class HallDetail extends Component {
                 <div className="mt-2">
                     <NavLink to={'/halls/' + id + '/edit'} className="btn btn-primary px-2 py-0 m-2"
                     >Редактировать</NavLink>
-                    <button className="btn btn-danger px-2 py-0 m-2" onClick={() => this.deleteHall(id)}
-                    >Удалить
-                    </button>
+                    {localStorage.getItem('auth-token') ? <button className="btn btn-danger px-2 py-0 m-2"
+                                onClick={() => this.deleteHall(id)}>Удалить</button>: null}
                 </div>
                 {this.state.shows ? <ShowSchedule shows={this.state.shows} movie={true} hall={false}/> : null}
             </div>

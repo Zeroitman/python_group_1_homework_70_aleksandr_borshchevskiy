@@ -53,7 +53,6 @@ class MovieDetail extends Component {
         // входящие в формат URI, в т.ч. & и =.
         const query = encodeURI(`movie_id=${movieId}&starts_after=${startsAfter}&starts_before=${startsBefore}`);
         axios.get(`${SHOWS_URL}?${query}`).then(response => {
-            console.log(response);
             this.setState(prevState => {
                 let newState = {...prevState};
                 newState.shows = response.data;
@@ -66,8 +65,14 @@ class MovieDetail extends Component {
     };
 
     deleteMovie = (id) => {
-        axios.delete('movies/' + id).then(this.props.history.replace('/'))
+        axios.delete('movies/' + id, {
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + localStorage.getItem('auth-token')
+            }
+        }).then(this.props.history.replace('/'))
     };
+
 
     render() {
         // если movie в state нет, ничего не рисуем.
@@ -91,10 +96,8 @@ class MovieDetail extends Component {
                     {description ? <div className="text-left">{description}</div> : null}
                     <NavLink to={'/movies/' + id + '/edit'}
                              className="btn btn-primary px-2 py-0 m-2">Редактирование</NavLink>
-                    <button className="btn btn-danger px-2 py-0 m-2"
-                            onClick={() => this.deleteMovie(id)}
-                    >Удалить
-                    </button>
+                    {localStorage.getItem('auth-token') ? <button className="btn btn-danger px-2 py-0 m-2"
+                            onClick={() => this.deleteMovie(id)}>Удалить</button>: null}
                     {this.state.shows ? <ShowSchedule shows={this.state.shows}/> : null}
                 </div>
             </div>
@@ -104,3 +107,4 @@ class MovieDetail extends Component {
 
 
 export default MovieDetail;
+

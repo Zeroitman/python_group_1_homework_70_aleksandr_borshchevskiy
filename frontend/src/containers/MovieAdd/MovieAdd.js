@@ -25,7 +25,7 @@ class MovieAdd extends Component {
         Object.keys(movie).forEach(key => {
             const value = movie[key];
             if (value) {
-                if(Array.isArray(value)) {
+                if (Array.isArray(value)) {
                     // для полей с несколькими значениями (категорий)
                     // нужно добавить каждое значение отдельно
                     value.forEach(item => formData.append(key, item));
@@ -44,7 +44,10 @@ class MovieAdd extends Component {
 
         // отправка запроса
         return axios.post(MOVIES_URL, formData, {
-            headers: {'Content-Type': 'multipart/form-data'}
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': 'Token ' + localStorage.getItem('auth-token')  // сюда
+            }
         })
             .then(response => {
                 // при успешном создании response.data содержит данные фильма

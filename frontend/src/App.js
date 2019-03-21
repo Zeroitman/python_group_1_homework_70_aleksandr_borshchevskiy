@@ -13,6 +13,9 @@ import HallEdit from './containers/HallEdit/HallEdit';
 import HallAdd from './containers/HallAdd/HallAdd';
 import Login from './containers/Login/Login'
 import Logout from './containers/Logout/Logout'
+import AuthRoute from './components/AuthRoute/AuthRoute'
+
+
 class App extends Component {
     render() {
         return (
@@ -21,12 +24,12 @@ class App extends Component {
                     <Switch>
                         <Route path="/login" component={Login}/>
                         <Route path="/logout" component={Logout}/>
-                        <Route path="/halls/add" component={HallAdd}/>
-                        <Route path="/halls/:id/edit" component={HallEdit}/>
+                        <AuthRoute path="/halls/add" component={HallAdd}/>
+                        <AuthRoute path="/halls/:id/edit" component={HallEdit}/>
                         <Route path="/halls/:id" component={HallDetail}/>
                         <Route path="/halls" exact component={HallsList}/>
-                        <Route path="/movies/add" component={MovieAdd}/>
-                        <Route path="/movies/:id/edit" component={MovieEdit}/>
+                        <AuthRoute path="/movies/add" component={MovieAdd}/>
+                        <AuthRoute path="/movies/:id/edit" component={MovieEdit}/>
                         <Route path="/movies/:id" component={MovieDetail}/>
                         <Route path="/" component={MovieList}/>
                     </Switch>

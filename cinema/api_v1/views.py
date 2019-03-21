@@ -2,15 +2,20 @@ from webapp.models import Movie, Category, Hall, Seat, Show
 from rest_framework import viewsets
 from api_v1.serializers import MovieCreateSerializer, MovieDisplaySerializer, \
     CategorySerializer, HallSerializer, SeatSerializer, ShowSerializer
+from rest_framework.permissions import IsAuthenticated
 
 
 # Базовый класс ViewSet, основанный на ModelViewSet,
 # но с отключенной проверкой аутентификации, и не блокирующий запросы без токена.
-class NoAuthModelViewSet(viewsets.ModelViewSet):
-    authentication_classes = []
+class BaseViewSet(viewsets.ModelViewSet):
+    def get_permissions(self):
+        permissions = super().get_permissions()
+        if self.request.method in ["POST", "DELETE", "PUT", "PATCH"]:
+            permissions.append(IsAuthenticated())
+        return permissions
 
 
-class MovieViewSet(NoAuthModelViewSet):
+class MovieViewSet(BaseViewSet):
     queryset = Movie.objects.active().order_by('id')
 
     # если в настройках REST_FRAMEWORK прописан django_filters в DEFAULT_FILTER_BACKENDS
@@ -49,22 +54,22 @@ class MovieViewSet(NoAuthModelViewSet):
     #     return queryset
 
 
-class CategoryViewSet(NoAuthModelViewSet):
+class CategoryViewSet(BaseViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
-class HallViewSet(NoAuthModelViewSet):
+class HallViewSet(BaseViewSet):
     queryset = Hall.objects.all()
     serializer_class = HallSerializer
 
 
-class SeatViewSet(NoAuthModelViewSet):
+class SeatViewSet(BaseViewSet):
     queryset = Seat.objects.all()
     serializer_class = SeatSerializer
 
 
-class ShowViewSet(NoAuthModelViewSet):
+class ShowViewSet(BaseViewSet):
     queryset = Show.objects.all()
     serializer_class = ShowSerializer
 

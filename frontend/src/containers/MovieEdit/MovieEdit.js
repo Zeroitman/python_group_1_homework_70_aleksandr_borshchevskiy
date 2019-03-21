@@ -37,7 +37,7 @@ class MovieEdit extends Component {
     showErrorAlert = (error) => {
         this.setState(prevState => {
             let newState = {...prevState};
-            newState.alert = {type: 'danger', message: `Movie was not added!`};
+            newState.alert = {type: 'danger', message: `Фильм не добавлен!`};
             return newState;
         });
     };
@@ -48,7 +48,7 @@ class MovieEdit extends Component {
         Object.keys(movie).forEach(key => {
             const value = movie[key];
             if (value) {
-                if(Array.isArray(value)) {
+                if (Array.isArray(value)) {
                     // для полей с несколькими значениями (категорий)
                     // нужно добавить каждое значение отдельно
                     value.forEach(item => formData.append(key, item));
@@ -67,8 +67,12 @@ class MovieEdit extends Component {
 
         // отправка запроса
         return axios.put(MOVIES_URL + this.props.match.params.id + '/', formData, {
-            headers: {'Content-Type': 'multipart/form-data'}
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': 'Token ' + localStorage.getItem('auth-token')
+            }
         })
+
             .then(response => {
                 // при успешном создании response.data содержит данные фильма
                 const movie = response.data;
