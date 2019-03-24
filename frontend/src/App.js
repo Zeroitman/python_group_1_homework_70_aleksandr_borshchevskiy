@@ -15,6 +15,7 @@ import Logout from './containers/Logout/Logout'
 import AuthRoute from './components/AuthRoute/AuthRoute'
 import Register from './containers/Register/Register'
 import Personal from './containers/Personal/Personal'
+import PersonalEdit from './containers/PersonalEdit/PersonalEdit'
 
 class App extends Component {
     render() {
@@ -22,7 +23,8 @@ class App extends Component {
             <BrowserRouter>
                 <Layout>
                     <Switch>
-                        <Route path="/personal" component={Personal} />
+                        <Route path="/personal/edit" component={PersonalEdit}/>
+                        <Route path="/personal" component={Personal}/>
                         <Route path="/login" component={Login}/>
                         <Route path="/logout" component={Logout}/>
                         <Route path="/register" component={Register}/>

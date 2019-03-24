@@ -8,7 +8,7 @@ class Register extends Component {
             'username': '',
             'password': '',
             'passwordConfirm': '',
-            'name': "",
+            'first_name': "",
             'last_name': "",
             'email': ""
         },
@@ -33,12 +33,11 @@ class Register extends Component {
         });
     };
 
-    performLogin = (username, password) => {
-        axios.post(LOGIN_URL, {username, password}).then(response => {
-            console.log(response);
+    performLogin = (username, password, first_name, last_name, email) => {
+        axios.post(LOGIN_URL, {username, password, first_name, last_name, email}).then(response => {
             localStorage.setItem('auth-token', response.data.token);
             localStorage.setItem('username', response.data.username);
-            localStorage.setItem('name', response.data.name);
+            localStorage.setItem('first_name', response.data.first_name);
             localStorage.setItem('last_name', response.data.last_name);
             localStorage.setItem('email', response.data.email);
             localStorage.setItem('is_admin', response.data.is_admin);
@@ -54,14 +53,15 @@ class Register extends Component {
         })
     };
 
+
     formSubmitted = (event) => {
         event.preventDefault();
         if (this.passwordsMatch()) {
-            const {username, password} = this.state.user;
-            const data = {username, password};
+            const {username, password, first_name, last_name, email} = this.state.user;
+            const data = {username, password, first_name, last_name, email};
             return axios.post(REGISTER_URL, data).then(response => {
                 console.log(response);
-                this.performLogin(username, password);
+                this.performLogin(username, password, first_name, last_name, email);
             }).catch(error => {
                 console.log(error);
                 console.log(error.response);
@@ -99,7 +99,7 @@ class Register extends Component {
     };
 
     render() {
-        const {name, email, last_name, username, password, passwordConfirm} = this.state.user;
+        const {first_name, email, last_name, username, password, passwordConfirm} = this.state.user;
         return <Fragment>
             <h2>Регистрация</h2>
             <form onSubmit={this.formSubmitted}>
@@ -112,7 +112,7 @@ class Register extends Component {
                 </div>
                 <div className="form-row">
                     <label className="font-weight-bold">Имя</label>
-                    <input type="text" className="form-control" name="name" value={name}
+                    <input type="text" className="form-control" name="first_name" value={first_name}
                            onChange={this.inputChanged}/>
                 </div>
                 <div className="form-row">
