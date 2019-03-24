@@ -1,13 +1,16 @@
 import React, {Component, Fragment} from 'react';
 import axios from "axios";
-import {REGISTER_URL} from "../../api-urls";
+import {REGISTER_URL, LOGIN_URL} from "../../api-urls";
 
 class Register extends Component {
     state = {
         user: {
             'username': '',
             'password': '',
-            'passwordConfirm': ''
+            'passwordConfirm': '',
+            'name': "",
+            'last_name': "",
+            'email': ""
         },
         errors: {}
     };
@@ -17,19 +20,48 @@ class Register extends Component {
         return password === passwordConfirm
     };
 
+    passwordConfirmChange = (event) => {
+        this.inputChanged(event);
+        const password = this.state.user.password;
+        const passwordConfirm = event.target.value;
+        const errors = (password === passwordConfirm) ? [] : ['Passwords do not match'];
+        this.setState({
+            errors: {
+                ...this.state.errors,
+                passwordConfirm: errors
+            }
+        });
+    };
+
+    performLogin = (username, password) => {
+        axios.post(LOGIN_URL, {username, password}).then(response => {
+            console.log(response);
+            localStorage.setItem('auth-token', response.data.token);
+            localStorage.setItem('username', response.data.username);
+            localStorage.setItem('name', response.data.name);
+            localStorage.setItem('last_name', response.data.last_name);
+            localStorage.setItem('email', response.data.email);
+            localStorage.setItem('is_admin', response.data.is_admin);
+            localStorage.setItem('is_staff', response.data.is_staff);
+            this.props.history.replace('/');
+        }).catch(error => {
+            console.log(error);
+            console.log(error.response);
+            this.props.history.replace({
+                pathname: '/login/',
+                state: {next: '/'}
+            });
+        })
+    };
+
     formSubmitted = (event) => {
         event.preventDefault();
         if (this.passwordsMatch()) {
-            const data = {
-                username: this.state.user.username,
-                password: this.state.user.password
-            };
+            const {username, password} = this.state.user;
+            const data = {username, password};
             return axios.post(REGISTER_URL, data).then(response => {
                 console.log(response);
-                this.props.history.push({
-                    pathname: '/login/',
-                    state: {next: '/'}
-                });
+                this.performLogin(username, password);
             }).catch(error => {
                 console.log(error);
                 console.log(error.response);
@@ -60,23 +92,38 @@ class Register extends Component {
     };
 
     showErrors = (name) => {
-        if(this.state.errors && this.state.errors[name]) {
+        if (this.state.errors && this.state.errors[name]) {
             return this.state.errors[name].map((error, index) => <p className="text-danger" key={index}>{error}</p>);
         }
         return null;
     };
 
     render() {
-        const {username, password, passwordConfirm} = this.state.user;
+        const {name, email, last_name, username, password, passwordConfirm} = this.state.user;
         return <Fragment>
             <h2>Регистрация</h2>
             <form onSubmit={this.formSubmitted}>
                 {this.showErrors('non_field_errors')}
                 <div className="form-row">
-                    <label className="font-weight-bold">Имя пользователя</label>
+                    <label className="font-weight-bold">Логин</label>
                     <input type="text" className="form-control" name="username" value={username}
                            onChange={this.inputChanged}/>
                     {this.showErrors('username')}
+                </div>
+                <div className="form-row">
+                    <label className="font-weight-bold">Имя</label>
+                    <input type="text" className="form-control" name="name" value={name}
+                           onChange={this.inputChanged}/>
+                </div>
+                <div className="form-row">
+                    <label className="font-weight-bold">Фамилие</label>
+                    <input type="text" className="form-control" name="last_name" value={last_name}
+                           onChange={this.inputChanged}/>
+                </div>
+                <div className="form-row">
+                    <label className="font-weight-bold">Email</label>
+                    <input type="text" className="form-control" name="email" value={email}
+                           onChange={this.inputChanged}/>
                 </div>
                 <div className="form-row">
                     <label className="font-weight-bold">Пароль</label>
@@ -87,7 +134,7 @@ class Register extends Component {
                 <div className="form-row">
                     <label className="font-weight-bold">Подтверждение пароля</label>
                     <input type="password" className="form-control" name="passwordConfirm" value={passwordConfirm}
-                           onChange={this.inputChanged}/>
+                           onChange={this.passwordConfirmChange}/>
                     {this.showErrors('passwordConfirm')}
                 </div>
                 <button type="submit" className="btn btn-primary mt-2">Создать учётную запись</button>

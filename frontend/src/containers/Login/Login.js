@@ -7,27 +7,18 @@ class Login extends Component {
     state = {
         credentials: {
             username: "",
-            password: ""
+            password: "",
         }
     };
-
-    // formSubmitted = (event) => {
-    //     event.preventDefault();
-    //     return axios.post(LOGIN_URL, this.state.credentials).then(response => {
-    //         console.log(response);
-    //         localStorage.setItem('auth-token', response.data.token);
-    //         this.props.history.push('/');
-    //     }).catch(error => {
-    //         console.log(error);
-    //         console.log(error.response);
-    //     });
-    // };
 
     formSubmitted = (event) => {
         event.preventDefault();
         return axios.post(LOGIN_URL, this.state.credentials).then(response => {
             console.log(response);
             localStorage.setItem('auth-token', response.data.token);
+            localStorage.setItem('username', response.data.username);
+            localStorage.setItem('is_admin', response.data.is_admin);
+            localStorage.setItem('is_staff', response.data.is_staff);
             if (this.props.location.state) {
                 this.props.history.replace(this.props.location.state.next);
             } else {
@@ -65,7 +56,7 @@ class Login extends Component {
             <form onSubmit={this.formSubmitted}>
                 {this.showErrors('non_field_errors')}
                 <div className="form-row">
-                    <label className="font-weight-bold">Имя пользователя</label>
+                    <label className="font-weight-bold">Логин</label>
                     <input type="text" className="form-control" name="username" value={username}
                            onChange={this.inputChanged}/>
                     {this.showErrors('username')}
