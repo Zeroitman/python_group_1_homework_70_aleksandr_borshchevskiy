@@ -1,69 +1,127 @@
-import React, {Component} from 'react'
-// import axios from "axios";
-// import PersonalForm from "../../components/PersonalForm/PersonalForm";
+import React, {Component, Fragment} from 'react';
+import axios from "axios";
 
 
 class PersonalEdit extends Component {
-    // state = {
-    //     hall: null,
-    // };
-    //
-    // componentDidMount() {
-    //     axios.get('personal/' + this.props.match.params.id)
-    //         .then(response => {
-    //             const hall = response.data;
-    //             this.setState(prevState => {
-    //                 const newState = {...prevState};
-    //                 newState.hall = hall;
-    //                 return newState;
-    //             });
-    //             console.log(this.state)
-    //         })
-    //         .catch(error => {
-    //             console.log(error);
-    //             console.log(error.response);
-    //         });
-    // }
-    //
-    // gatherFormData = (hall) => {
-    //     let formData = new FormData();
-    //     Object.keys(hall).forEach(key => {
-    //         const value = hall[key];
-    //         if (value) {
-    //             formData.append(key, value);
-    //         }
-    //     });
-    //     return formData;
-    // };
-    //
-    // formSubmitted = (hall) => {
-    //     const formData = this.gatherFormData(hall);
-    //     return axios.put('halls/' + this.props.match.params.id + '/', formData, {
-    //         headers: {
-    //             'Content-Type': 'multipart/form-data',
-    //             'Authorization': 'Token ' + localStorage.getItem('auth-token')
-    //         }
-    //     })
-    //         .then(response => {
-    //             const hall = response.data;
-    //             console.log(hall);
-    //             this.props.history.replace('/halls/' + hall.id);
-    //         })
-    //         .catch(error => {
-    //             console.log(error);
-    //             console.log(error.response);
-    //         });
-    // };
+    constructor(props) {
+        super(props);
+        this.state = {
+            personal: {
+                'id': localStorage.getItem('id'),
+                'first_name': localStorage.getItem('first_name'),
+                'last_name': localStorage.getItem('last_name'),
+                'email': localStorage.getItem('email'),
+                'password': ''
+            }
+        };
+        if (this.props.personal) {
+            this.state.personal = this.props.personal;
+        }
+    }
+
+
+    updateLocalStorage = () => {
+        localStorage.setItem('first_name', this.state.personal.first_name);
+        localStorage.setItem('last_name', this.state.personal.last_name);
+        localStorage.setItem('email', this.state.personal.email);
+        localStorage.setItem('password', this.state.personal.password);
+    };
+
+    gatherData = (personal) => {
+        let data = {};
+        Object.keys(personal).forEach(key => {
+            data[key] = personal[key] === "" ? null : personal[key];
+        });
+        if(!data.password) {
+            delete data['password']
+        }
+        return data;
+    };
+
+    formSubmitted = (event) => {
+        event.preventDefault();
+        const data = this.gatherData(this.state.personal);
+        console.log(data);
+        axios.put('user/'+ this.state.personal.id + '/edit/', data).then(response => {
+            console.log(response.data);
+            this.updateLocalStorage()
+        }).catch(error => {
+            console.log(error);
+            console.log(error.response);
+        })
+    };
+
+    updatePersonal(field, value) {
+        this.setState(prevState => {
+            let newState = {...prevState};
+            let personal = {...prevState.personal};
+            personal[field] = value;
+            newState.personal = personal;
+            return newState;
+        })
+    }
+
+    inputChanged = (event) => {
+        const {name, value} = event.target;
+        this.updatePersonal(name, value);
+    };
 
     render() {
-        // const {hall} = this.state;
-        // console.log(hall);
-        return <div>
-            <div>lorem</div>
-           {/*{hall ? <PersonalForm onSubmit={this.formSubmitted} hall={hall}/> : null}*/}
-        </div>
+        const {first_name, last_name, email, password} = this.state.personal;
+        return <Fragment>
+            <div className='container'>
+                <form onSubmit={this.formSubmitted}>
+                    <h2 className="text-center mt-3"> Страница редактирования личных данных</h2>
+                    <div>
+                        <label className="mt-2 mb-0 font-weight-bold">Имя</label>
+                        <input type="text" value={first_name} onChange={this.inputChanged} name='first_name'
+                               className="form-control"/>
+                    </div>
+                    <div>
+                        <label className="mt-2 mb-0 font-weight-bold">Фамилие</label>
+                        <input type="text" value={last_name} onChange={this.inputChanged} name='last_name'
+                               className="form-control"/>
+                    </div>
+                    <div>
+                        <label className="mt-2 mb-0 font-weight-bold">Email</label>
+                        <input type="email" value={email} onChange={this.inputChanged} name='email'
+                               className="form-control"/>
+                    </div>
+                    <div>
+                        <label className="mt-2 mb-0 font-weight-bold">Пароль</label>
+                        <input type="password" value={password} onChange={this.inputChanged} name='password'
+                               className="form-control"/>
+                    </div>
+                    <div className="mt-2">
+                        <button type="submit" className="btn btn-success">Отредактировать профиль</button>
+                    </div>
+                </form>
+            </div>
+        </Fragment>
     }
 }
 
 
 export default PersonalEdit;
+
+
+
+
+
+// componentDidMount() {
+    //     axios.get(LOGIN_URL, this.state.personal).then(response => {
+    //         localStorage.setItem('first_name', response.data.first_name);
+    //         localStorage.setItem('last_name', response.data.last_name);
+    //         localStorage.setItem('email', response.data.email);
+    //         localStorage.setItem('password', response.data.password);
+    //         console.log(response.data);
+    //         this.setState(prevState => {
+    //             let newState = {...prevState};
+    //             newState.personal = response.data;
+    //             return newState;
+    //         })
+    //     }).catch(error => {
+    //         console.log(error);
+    //         console.log(error.response);
+    //     })
+    // }

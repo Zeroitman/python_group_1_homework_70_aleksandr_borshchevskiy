@@ -70,6 +70,7 @@ class ShowSerializer(serializers.ModelSerializer):
     # SerializerMethodField - поле, которое получает данные из метода сериализатора
     hall_name = serializers.SerializerMethodField(read_only=True, source='hall')
     movie_name = serializers.SerializerMethodField(read_only=True, source='movie')
+
     # имя метода должно быть get_ + название поля (hall_name -> get_hall_name())
     # метод принимает один аргумент - сериализуемый объект (в данном случае - сеанс).
     def get_hall_name(self, show):
@@ -85,10 +86,13 @@ class ShowSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-    first_name = serializers.CharField(required=True)
-    last_name = serializers.CharField(required=True)
+    # password = serializers.CharField(write_only=True)
     email = serializers.EmailField(required=True)
+
+    # first_name = serializers.CharField(required=True)
+    # last_name = serializers.CharField(required=True)
+    username = serializers.CharField(required=False)
+    password = serializers.CharField(required=False, write_only=True)
 
     def create(self, validated_data):
         password = validated_data.pop('password')
@@ -96,6 +100,16 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+    def update(self, instance, validated_data):
+        password = validated_data.get('password')
+        if password:
+            instance.set_password(password)
+        instance.email = validated_data.get('email', instance.email)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.save()
+        return instance
 
     class Meta:
         model = User

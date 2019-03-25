@@ -18,6 +18,7 @@ class Login extends Component {
         event.preventDefault();
         return axios.post(LOGIN_URL, this.state.credentials).then(response => {
             console.log(response);
+            localStorage.setItem('id', response.data.id);
             localStorage.setItem('auth-token', response.data.token);
             localStorage.setItem('username', response.data.username);
             localStorage.setItem('first_name', response.data.first_name);
