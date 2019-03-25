@@ -190,14 +190,6 @@
   }
 },
 {
-  "model": "webapp.hall",
-  "pk": 9,
-  "fields": {
-    "name": "\u0417\u0430\u043b 4",
-    "description": null
-  }
-},
-{
   "model": "webapp.seat",
   "pk": 1,
   "fields": {
@@ -1021,7 +1013,7 @@
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$120000$PnW1o7XRU4ts$gaMpQ6gr26yk6tri3jdWoFVQ4PsyEa0rWqXTaXf+PFo=",
-    "last_login": "2019-03-19T13:44:38.704Z",
+    "last_login": "2019-03-24T13:19:06.637Z",
     "is_superuser": true,
     "username": "admin",
     "first_name": "",
@@ -1030,6 +1022,24 @@
     "is_staff": true,
     "is_active": true,
     "date_joined": "2019-03-18T10:32:37.519Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 10,
+  "fields": {
+    "password": "pbkdf2_sha256$120000$zZUGATpmt2lu$LhIqsQcMA3dXug1ZAgNbpKCV1eBw9PfdQXlDhm3wPEc=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "vasya",
+    "first_name": "\u0412\u0430\u0441\u044f",
+    "last_name": "\u041f\u0443\u0441\u044c\u043a\u0438\u043d",
+    "email": "vasya@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2019-03-24T14:56:43.485Z",
     "groups": [],
     "user_permissions": []
   }

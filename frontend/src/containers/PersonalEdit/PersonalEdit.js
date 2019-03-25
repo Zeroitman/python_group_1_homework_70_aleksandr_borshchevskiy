@@ -104,24 +104,3 @@ class PersonalEdit extends Component {
 
 export default PersonalEdit;
 
-
-
-
-
-// componentDidMount() {
-    //     axios.get(LOGIN_URL, this.state.personal).then(response => {
-    //         localStorage.setItem('first_name', response.data.first_name);
-    //         localStorage.setItem('last_name', response.data.last_name);
-    //         localStorage.setItem('email', response.data.email);
-    //         localStorage.setItem('password', response.data.password);
-    //         console.log(response.data);
-    //         this.setState(prevState => {
-    //             let newState = {...prevState};
-    //             newState.personal = response.data;
-    //             return newState;
-    //         })
-    //     }).catch(error => {
-    //         console.log(error);
-    //         console.log(error.response);
-    //     })
-    // }
