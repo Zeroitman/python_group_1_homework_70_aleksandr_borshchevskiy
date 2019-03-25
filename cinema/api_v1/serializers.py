@@ -76,11 +76,6 @@ class ShowSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # password = serializers.CharField(write_only=True)
-    # email = serializers.EmailField(required=True)
-    # first_name = serializers.CharField(required=True)
-    # last_name = serializers.CharField(required=True)
-    # username = serializers.CharField(required=False)
     password = serializers.CharField(write_only=True)
 
     def create(self, validated_data):
