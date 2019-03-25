@@ -11,16 +11,12 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('url', 'id', 'name', 'description')
 
 
-# Сериализатор для модели категорий, предназначенный для включения в сериализатор фильмов
-# не выводит ненужные в данном случае поля: description и url
 class InlineCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ('id', 'name')
 
 
-# Сериализатор фильмов для создания/обновления
-# выводит категории по умолчанию - в виде списка id категорий
 class MovieCreateSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='api_v1:movie-detail')
 
@@ -29,8 +25,6 @@ class MovieCreateSerializer(serializers.ModelSerializer):
         fields = ('url', 'id', 'name', 'description', 'poster', 'release_date', 'finish_date', 'categories')
 
 
-# Сериализатор для просмотра фильмов
-# выводит категории в виде списка вложенных объектов, представленных сериализатором InlineCategorySerializer.
 class MovieDisplaySerializer(MovieCreateSerializer):
     categories = InlineCategorySerializer(many=True, read_only=True)
 
@@ -66,13 +60,9 @@ class ShowSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='api_v1:show-detail')
     movie_url = serializers.HyperlinkedRelatedField(view_name='api_v1:movie-detail', read_only=True, source='movie')
     hall_url = serializers.HyperlinkedRelatedField(view_name='api_v1:hall-detail', read_only=True, source='hall')
-
-    # SerializerMethodField - поле, которое получает данные из метода сериализатора
     hall_name = serializers.SerializerMethodField(read_only=True, source='hall')
     movie_name = serializers.SerializerMethodField(read_only=True, source='movie')
 
-    # имя метода должно быть get_ + название поля (hall_name -> get_hall_name())
-    # метод принимает один аргумент - сериализуемый объект (в данном случае - сеанс).
     def get_hall_name(self, show):
         return show.hall.name
 
@@ -87,12 +77,11 @@ class ShowSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     # password = serializers.CharField(write_only=True)
-    email = serializers.EmailField(required=True)
-
+    # email = serializers.EmailField(required=True)
     # first_name = serializers.CharField(required=True)
     # last_name = serializers.CharField(required=True)
-    username = serializers.CharField(required=False)
-    password = serializers.CharField(required=False, write_only=True)
+    # username = serializers.CharField(required=False)
+    password = serializers.CharField(write_only=True)
 
     def create(self, validated_data):
         password = validated_data.pop('password')

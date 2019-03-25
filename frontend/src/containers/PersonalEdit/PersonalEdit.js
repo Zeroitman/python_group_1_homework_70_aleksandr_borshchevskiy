@@ -42,9 +42,12 @@ class PersonalEdit extends Component {
         event.preventDefault();
         const data = this.gatherData(this.state.personal);
         console.log(data);
-        axios.put('user/'+ this.state.personal.id + '/edit/', data).then(response => {
+        axios.patch('user/'+ this.state.personal.id + '/edit/', data).then(response => {
             console.log(response.data);
-            this.updateLocalStorage()
+            this.updateLocalStorage();
+            this.props.history.replace({
+                pathname: '/personal/'
+            });
         }).catch(error => {
             console.log(error);
             console.log(error.response);
