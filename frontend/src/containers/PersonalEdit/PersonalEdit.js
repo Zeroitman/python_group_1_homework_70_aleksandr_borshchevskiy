@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import axios from "axios";
+import connect from "react-redux/es/connect/connect";
 
 
 class PersonalEdit extends Component {
@@ -7,10 +8,10 @@ class PersonalEdit extends Component {
         super(props);
         this.state = {
             personal: {
-                'id': localStorage.getItem('id'),
-                'first_name': localStorage.getItem('first_name'),
-                'last_name': localStorage.getItem('last_name'),
-                'email': localStorage.getItem('email'),
+                'id': this.props.auth.id,
+                'first_name': this.props.auth.first_name,
+                'last_name': this.props.auth.last_name,
+                'email': this.props.auth.email,
                 'password': ''
             }
         };
@@ -105,5 +106,8 @@ class PersonalEdit extends Component {
 }
 
 
-export default PersonalEdit;
+const mapStateToProps = state => ({auth: state.auth});
+const mapDispatchToProps = dispatch => ({});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PersonalEdit);
 

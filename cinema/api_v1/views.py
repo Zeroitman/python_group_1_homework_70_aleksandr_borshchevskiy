@@ -1,11 +1,12 @@
 from webapp.models import Movie, Category, Hall, Seat, Show
 from rest_framework import viewsets
 from api_v1.serializers import MovieCreateSerializer, MovieDisplaySerializer, \
-    CategorySerializer, HallSerializer, SeatSerializer, ShowSerializer, UserSerializer
+    CategorySerializer, HallSerializer, SeatSerializer, ShowSerializer, UserSerializer, \
+    AuthTokenSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.generics import CreateAPIView, UpdateAPIView
 from django.contrib.auth.models import User
-from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.views import ObtainAuthToken,  APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
@@ -29,6 +30,23 @@ class LoginView(ObtainAuthToken):
         })
 
 
+class TokenLoginView(APIView):
+    serializer_class = AuthTokenSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        token = serializer.validated_data['token']
+        user = token.user
+        return Response({
+            'token': token.key,
+            'id': user.id,
+            'username': user.username,
+            'is_admin': user.is_superuser,
+            'is_staff': user.is_staff
+        })
+
+
 class UserCreateView(CreateAPIView):
     model = User
     serializer_class = UserSerializer
@@ -40,8 +58,6 @@ class UserUpdateView(UpdateAPIView):
     queryset = User.objects.all()
 
 
-# Базовый класс ViewSet, основанный на ModelViewSet,
-# но с отключенной проверкой аутентификации, и не блокирующий запросы без токена.
 class BaseViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         permissions = super().get_permissions()
@@ -53,40 +69,15 @@ class BaseViewSet(viewsets.ModelViewSet):
 class MovieViewSet(BaseViewSet):
     queryset = Movie.objects.active().order_by('id')
 
-    # если в настройках REST_FRAMEWORK прописан django_filters в DEFAULT_FILTER_BACKENDS
-    # то для базовых фильтров по полям модели достаточно указать это поле в ViewSet'е,
-    # в котором перечислить список полей, по которым можно фильтровать.
-    # filterset_fields = ('release_date',)
-
-    # Метод, который отвечает за то,
-    # какой класс сериализатора будет использоваться при обработке запроса.
-    # Если запрос сделан методом GET, т.е. запрос на просмотр фильма или списка фильмов,
-    # то метод возвращает класс MovieDisplaySerializer (вывод фильмов с вложенными категориями),
-    # иначе - MovieCreateSerializer (вывод и сохранение фильмов с категориями в виде списка id категорий).
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return MovieDisplaySerializer
         else:
             return MovieCreateSerializer
 
-    # метод, который выполняет удаление объекта instance.
-    # здесь он переопределён для "мягкого" удаления объектов -
-    # вместо реального удаления объекта, меняется его свойство is_deleted на True.
-    # сам фильм сохраняется в базе, но при этом помечается, как удалённый.
     def perform_destroy(self, instance):
         instance.is_deleted = True
         instance.save()
-
-    # вариант фильтрации без использования сторонних библиотек.
-    # переопределяем метод get_queryset, и фильтруем в нём набор данных по параметрам запроса.
-
-    # этот метод приведён для примера (для текущих задач он здесь не требуется).
-    # def get_queryset(self):
-    #     queryset = self.queryset
-    #     release_date = self.request.query_params.get('release_date', None)
-    #     if release_date is not None:
-    #         queryset = queryset.filter(release_date__gte=release_date).order_by('-release_date')
-    #     return queryset
 
 
 class CategoryViewSet(BaseViewSet):
@@ -108,8 +99,6 @@ class ShowViewSet(BaseViewSet):
     queryset = Show.objects.all()
     serializer_class = ShowSerializer
 
-    # фильтр сеансов показа фильмов по id фильма и по дате начала сеанса
-    # сюда требуется добавить фильтр по id зала.
     def get_queryset(self):
         queryset = self.queryset
         movie_id = self.request.query_params.get('movie_id', None)

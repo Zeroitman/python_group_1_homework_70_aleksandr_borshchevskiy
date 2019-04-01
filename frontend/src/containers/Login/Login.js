@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
-import {LOGIN_URL} from "../../api-urls";
-import axios from 'axios';
+import {login, LOGIN_SUCCESS} from '../../store/actions/login'
+import {connect} from "react-redux";
 
 
 class Login extends Component {
@@ -13,33 +13,22 @@ class Login extends Component {
             email: ""
         }
     };
-
+    redirect = () => {
+        const {location, history} = this.props;
+        if (location.state) {
+            history.replace(location.state.next);
+        } else {
+            history.goBack();
+        }
+    };
     formSubmitted = (event) => {
         event.preventDefault();
-        return axios.post(LOGIN_URL, this.state.credentials).then(response => {
-            console.log(response);
-            localStorage.setItem('id', response.data.id);
-            localStorage.setItem('auth-token', response.data.token);
-            localStorage.setItem('username', response.data.username);
-            localStorage.setItem('first_name', response.data.first_name);
-            localStorage.setItem('last_name', response.data.last_name);
-            localStorage.setItem('email', response.data.email);
-            localStorage.setItem('is_admin', response.data.is_admin);
-            localStorage.setItem('is_staff', response.data.is_staff);
-            if (this.props.location.state) {
-                this.props.history.replace(this.props.location.state.next);
-            } else {
-                this.props.history.goBack();
-            }
-        }).catch(error => {
-            console.log(error);
-            console.log(error.response);
-            this.setState({
-                ...this.state,
-                errors: error.response.data
-            })
+        const {username, password, first_name, email, last_name} = this.state.credentials;
+        this.props.login(username, password, first_name, email, last_name).then((result) => {
+            if (result.type === LOGIN_SUCCESS) this.redirect();
         });
     };
+
 
     showErrors = (name) => {
         if (this.state.errors && this.state.errors[name]) {
@@ -52,7 +41,9 @@ class Login extends Component {
     inputChanged = (event) => {
         this.setState({
             ...this.state,
-            credentials: {...this.state.credentials, [event.target.name]: event.target.value}
+            credentials: {
+                ...this.state.credentials, [event.target.name]: event.target.value
+            }
         })
     };
 
@@ -81,4 +72,11 @@ class Login extends Component {
 }
 
 
-export default Login
+const mapStateToProps = state => state.login;
+
+const mapDispatchToProps = dispatch => ({
+    login: (username, password) => dispatch(login(username, password))
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

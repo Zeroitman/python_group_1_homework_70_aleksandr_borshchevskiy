@@ -1,6 +1,8 @@
 from webapp.models import Movie, Category, Hall, Seat, Show
+from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -37,9 +39,6 @@ class InlineSeatSerializer(serializers.ModelSerializer):
 
 class HallSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='api_v1:hall-detail')
-
-    # поле, представляющее обратную связь от зала к местам в зале.
-    # название поля должно совпадать с related_name внешнего ключа от мест к залу.
     seats = InlineSeatSerializer(many=True, read_only=True)
 
     class Meta:
@@ -98,3 +97,13 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'password', 'first_name', 'last_name', 'email')
+
+
+class AuthTokenSerializer(serializers.Serializer):
+    token = serializers.CharField(write_only=True)
+
+    def validate_token(self, token):
+        try:
+            return Token.objects.get(key=token)
+        except Token.DoesNotExist:
+            raise ValidationError("Invalid credentials")

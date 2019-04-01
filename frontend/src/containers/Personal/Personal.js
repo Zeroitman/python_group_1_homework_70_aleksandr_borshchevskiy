@@ -1,13 +1,13 @@
 import React, {Component, Fragment} from 'react';
 import {NavLink} from "react-router-dom";
+import connect from "react-redux/es/connect/connect";
 
 class Personal extends Component {
-
     render() {
-        const username = localStorage.getItem('username');
-        const first_name = localStorage.getItem('first_name');
-        const last_name = localStorage.getItem('last_name');
-        const email = localStorage.getItem('email');
+        const username = this.props.auth.username;
+        const first_name = this.props.auth.first_name;
+        const last_name = this.props.auth.last_name;
+        const email = this.props.auth.email;
         return <Fragment>
             <h1 className="text-center font-weight-normal mt-4"> Добро пожаловать в личный кабинет!</h1>
             <h3 className="text-left font-weight-normal"><b>Логин:</b> {username}</h3>
@@ -22,5 +22,5 @@ class Personal extends Component {
     }
 }
 
-
-export default Personal
+const mapStateToProps = state => ({auth: state.auth});
+export default connect(mapStateToProps)(Personal);

@@ -54,7 +54,7 @@ class Hall(models.Model):
 
 
 class Seat(models.Model):
-    hall = models.ForeignKey(Hall, related_name='seats', on_delete=models.PROTECT)
+    hall = models.ForeignKey(Hall, related_name='seats', on_delete=models.CASCADE)
     row = models.CharField(max_length=10)
     seat = models.CharField(max_length=5)
 

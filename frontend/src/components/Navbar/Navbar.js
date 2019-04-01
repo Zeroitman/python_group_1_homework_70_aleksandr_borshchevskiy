@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {NavLink} from "react-router-dom";
-
+import {connect} from "react-redux";
 
 class Navbar extends Component {
     state = {
@@ -12,8 +12,7 @@ class Navbar extends Component {
     };
 
     render() {
-        const username = localStorage.getItem('username');
-        const isAdmin = localStorage.getItem('is_admin');
+        const {username, is_admin} = this.props.auth;
         return <div className='App'>
             <nav className="navbar navbar-expand-lg navbar-light bg-secondary">
                 <div className="container">
@@ -32,7 +31,7 @@ class Navbar extends Component {
                             <li className="nav-item active">
                                 <NavLink to='/halls' className="nav-link"> Залы</NavLink>
                             </li>
-                            {isAdmin === "true" ?
+                            {is_admin === true ?
                                 <ul className="navbar-nav">
                                     <li className="nav-item">
                                         <NavLink to='/movies/add' className="nav-link"> Добавить фильм </NavLink>
@@ -45,7 +44,8 @@ class Navbar extends Component {
                         <ul className="navbar-nav ml-auto">
                             {username ? [
                                 <li className="nav-item" key="username">
-                                    <NavLink to='/personal' className="navbar-text"> Привет, {username}! </NavLink>
+                                    <NavLink to='/personal'
+                                             className="navbar-text"> Привет, {username}! </NavLink>
                                 </li>,
                                 <NavLink to="/logout" className="nav-link" key="logout">Выйти</NavLink>
                             ] : [
@@ -66,4 +66,9 @@ class Navbar extends Component {
 }
 
 
-export default Navbar
+// вытаскиваем данные об аутентификации из state
+const mapStateToProps = state => ({auth: state.auth});
+// никаких дополнительных действий здесь не нужно
+const mapDispatchToProps = dispatch => ({});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar);

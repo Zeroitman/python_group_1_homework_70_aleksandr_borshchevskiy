@@ -68,7 +68,7 @@ class MovieDetail extends Component {
         axios.delete('movies/' + id, {
             headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Token ' + localStorage.getItem('auth-token')
+            'Authorization': 'Token ' + localStorage.getItem('is_admin')
             }
         }).then(this.props.history.replace('/'))
     };
@@ -96,7 +96,8 @@ class MovieDetail extends Component {
                     {description ? <div className="text-left">{description}</div> : null}
                     <NavLink to={'/movies/' + id + '/edit'}
                              className="btn btn-primary px-2 py-0 m-2">Редактирование</NavLink>
-                    {localStorage.getItem('auth-token') ? <button className="btn btn-danger px-2 py-0 m-2"
+                    {localStorage.getItem('is_admin')?
+                        <button className="btn btn-danger px-2 py-0 m-2"
                             onClick={() => this.deleteMovie(id)}>Удалить</button>: null}
                     {this.state.shows ? <ShowSchedule shows={this.state.shows}/> : null}
                 </div>

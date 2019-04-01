@@ -4,6 +4,7 @@ import ShowSchedule from "../../components/ShowSchedule/ShowSchedule";
 import axios from 'axios';
 import {HALLS_URL, SHOWS_URL} from "../../api-urls";
 import moment from "moment";
+import connect from "react-redux/es/connect/connect";
 
 
 class HallDetail extends Component {
@@ -14,8 +15,9 @@ class HallDetail extends Component {
 
     componentDidMount() {
         const match = this.props.match;
-        axios.get(HALLS_URL + match.params.id)
-            .then(response => {return response.data;})
+        axios.get(HALLS_URL + match.params.id).then(response => {
+            return response.data;
+        })
             .then(halls => {
                 this.setState({halls});
                 this.loadShows(halls.id);
@@ -54,14 +56,17 @@ class HallDetail extends Component {
     render() {
         if (!this.state.halls) return null;
         const {name, id} = this.state.halls;
+        const isAdmin = this.props.auth.is_admin;
+        console.log(this.props.auth);
         return (
             <div className="card mt-3 text-center">
                 <div className="card-header h1">{name}</div>
                 <div className="mt-2">
                     <NavLink to={'/halls/' + id + '/edit'} className="btn btn-primary px-2 py-0 m-2"
                     >Редактировать</NavLink>
-                    {localStorage.getItem('auth-token') ? <button className="btn btn-danger px-2 py-0 m-2"
-                                                                  onClick={() => this.deleteHall(id)}>Удалить</button> : null}
+                    {isAdmin === true ?
+                        <button className="btn btn-danger px-2 py-0 m-2"
+                                onClick={() => this.deleteHall(id)}>Удалить</button> : null}
                 </div>
                 {this.state.shows ? <ShowSchedule shows={this.state.shows} movie={true} hall={false}/> : null}
             </div>
@@ -69,4 +74,5 @@ class HallDetail extends Component {
     }
 }
 
-export default HallDetail;
+const mapStateToProps = state => ({auth: state.auth});
+export default connect(mapStateToProps)(HallDetail);
