@@ -12,16 +12,14 @@ class HallEdit extends Component {
     formSubmitted = (hall) => {
         const {auth} = this.props;
         return this.props.saveHall(hall, auth.token).then(result => {
-            // console.log('Залы', hall);
             if (result.type === HALL_EDIT_SUCCESS) {
                 this.props.history.push('/halls/' + result.hall.id);
             }
         });
     };
+
     render() {
         const {hall, errors} = this.props.hallEdit;
-        console.log('Props', this.props.loadHall(this.props.match.params.id));
-        console.log('Зал на редактирование', hall);
         return <Fragment>
             {hall ? <HallForm onSubmit={this.formSubmitted} hall={hall} errors={errors}/> : null}
         </Fragment>
@@ -29,17 +27,17 @@ class HallEdit extends Component {
 }
 
 const mapStateToProps = state => {
-        return {
-            hallEdit: state.hallEdit,
-            auth: state.auth
-        }
-    };
+    return {
+        hallEdit: state.hallEdit,
+        auth: state.auth
+    }
+};
 const mapDispatchProps = dispatch => {
-        return {
-            loadHall: (id) => dispatch(loadHall(id)),
-            saveHall: (hall, token) => dispatch(saveHall(hall, token))
-        }
-    };
+    return {
+        loadHall: (id) => dispatch(loadHall(id)),
+        saveHall: (hall, token) => dispatch(saveHall(hall, token))
+    }
+};
 
 
 export default connect(mapStateToProps, mapDispatchProps)(HallEdit);

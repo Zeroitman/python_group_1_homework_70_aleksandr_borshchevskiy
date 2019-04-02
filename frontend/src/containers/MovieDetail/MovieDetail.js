@@ -67,8 +67,8 @@ class MovieDetail extends Component {
     deleteMovie = (id) => {
         axios.delete('movies/' + id, {
             headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Token ' + localStorage.getItem('is_admin')
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('auth-token')
             }
         }).then(this.props.history.replace('/'))
     };
@@ -77,7 +77,7 @@ class MovieDetail extends Component {
     render() {
         // если movie в state нет, ничего не рисуем.
         if (!this.state.movie) return null;
-
+        console.log(this.state.shows);
         // достаём данные из movie
         const {name, poster, description, release_date, finish_date, categories, id} = this.state.movie;
 
@@ -96,9 +96,9 @@ class MovieDetail extends Component {
                     {description ? <div className="text-left">{description}</div> : null}
                     <NavLink to={'/movies/' + id + '/edit'}
                              className="btn btn-primary px-2 py-0 m-2">Редактирование</NavLink>
-                    {localStorage.getItem('is_admin')?
+                    {localStorage.getItem('is_admin') ?
                         <button className="btn btn-danger px-2 py-0 m-2"
-                            onClick={() => this.deleteMovie(id)}>Удалить</button>: null}
+                                onClick={() => this.deleteMovie(id)}>Удалить</button> : null}
                     {this.state.shows ? <ShowSchedule shows={this.state.shows}/> : null}
                 </div>
             </div>
