@@ -8,10 +8,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import axios from 'axios';
 import {BASE_URL} from "./api-urls";
 import {createStore, applyMiddleware} from 'redux'
-import reducer from './store/reducer'
+import rootReducer from './store/reducers/root'
 import {Provider} from 'react-redux'
 import thunkMiddleware from 'redux-thunk';
-const store = createStore(reducer, applyMiddleware(thunkMiddleware));
+const store = createStore(rootReducer, applyMiddleware(thunkMiddleware));
 
 axios.defaults.baseURL = BASE_URL;
 ReactDOM.render(

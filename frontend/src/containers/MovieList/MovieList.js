@@ -1,28 +1,18 @@
 import React, {Fragment, Component} from 'react'
-import {MOVIES_URL} from "../../api-urls";
 import MovieCard from "../../components/MovieCard/MovieCard";
-import axios from 'axios';
+import {loadMovies} from "../../store/actions/movie-list";
+import {connect} from "react-redux";
 
-
-// компонент для показа списка фильмов клиенту
-// фильмы запрашиваются из API в момент показа компонента на странце (mount)
 class MovieList extends Component {
-    state = {
-        movies: [],
-    };
-
     componentDidMount() {
-        axios.get(MOVIES_URL)
-            .then(response => {return response.data;})
-            .then(movies => this.setState({movies}))
-            .catch(error => console.log(error));
+        this.props.loadMovies()
     }
 
     render() {
         return <Fragment>
             <div className='row'>
-                {this.state.movies.map(movie => {
-                    return <div className='col-xs-12 col-sm-6 col-lg-4 mt-3'  key={movie.id}>
+                {this.props.movies.map(movie => {
+                    return <div className='col-xs-12 col-sm-6 col-lg-4 mt-3' key={movie.id}>
                         <MovieCard movie={movie}/>
                     </div>
                 })}
@@ -31,5 +21,10 @@ class MovieList extends Component {
     }
 }
 
+const mapStateToProps = (state) => state.movieList;
+const mapDispatchToProps = (dispatch) => ({
+    loadMovies: () => dispatch(loadMovies())
+});
 
-export default MovieList;
+
+export default connect(mapStateToProps, mapDispatchToProps)(MovieList);

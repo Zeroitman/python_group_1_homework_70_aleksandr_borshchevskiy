@@ -57,7 +57,6 @@ class HallDetail extends Component {
         if (!this.state.halls) return null;
         const {name, id} = this.state.halls;
         const isAdmin = this.props.auth.is_admin;
-        console.log(this.props.auth);
         return (
             <div className="card mt-3 text-center">
                 <div className="card-header h1">{name}</div>

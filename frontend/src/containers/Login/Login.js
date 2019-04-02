@@ -10,29 +10,27 @@ class Login extends Component {
             password: "",
             first_name: "",
             last_name: "",
-            email: ""
-        }
+            email: "",
+        },
     };
-    redirect = () => {
-        const {location, history} = this.props;
-        if (location.state) {
-            history.replace(location.state.next);
-        } else {
-            history.goBack();
-        }
-    };
+
     formSubmitted = (event) => {
         event.preventDefault();
         const {username, password, first_name, email, last_name} = this.state.credentials;
         this.props.login(username, password, first_name, email, last_name).then((result) => {
-            if (result.type === LOGIN_SUCCESS) this.redirect();
+            if (result.type === LOGIN_SUCCESS)
+                if (this.props.location.state) {
+                    this.props.history.replace(this.props.location.state.next);
+                } else {
+                    this.props.history.goBack();
+                }
         });
     };
 
 
     showErrors = (name) => {
-        if (this.state.errors && this.state.errors[name]) {
-            return this.state.errors[name].map((error, index) => <p className="text-danger" key={index}>{error}</p>);
+        if (this.props.errors && this.props.errors[name]) {
+            return this.props.errors[name].map((error, index) => <p className="text-danger" key={index}>{error}</p>);
         }
         return null;
     };
