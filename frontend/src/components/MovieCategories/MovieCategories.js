@@ -12,5 +12,4 @@ const MovieCategories = (props) => {
     )}</p>;
 };
 
-
 export default MovieCategories;

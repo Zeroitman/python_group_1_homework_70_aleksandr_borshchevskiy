@@ -8,8 +8,7 @@ const initialState = {
 const hallEditReducer = (state = initialState, action) => {
     switch (action.type) {
         case HALL_LOAD_SUCCESS:
-            const hall = {...action.hall};
-            return {...state, hall};
+            return {...state, hall:action.hall};
         case HALL_EDIT_REQUEST:
             return {...state, errors: {}};
         case HALL_EDIT_SUCCESS:

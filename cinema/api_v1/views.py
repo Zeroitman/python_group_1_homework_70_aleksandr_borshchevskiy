@@ -39,9 +39,12 @@ class TokenLoginView(APIView):
         token = serializer.validated_data['token']
         user = token.user
         return Response({
-            'token': token.key,
             'id': user.id,
+            'token': token.key,
             'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
             'is_admin': user.is_superuser,
             'is_staff': user.is_staff
         })
