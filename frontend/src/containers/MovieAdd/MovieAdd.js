@@ -1,70 +1,32 @@
 import React, {Component, Fragment} from 'react';
-import {MOVIES_URL} from "../../api-urls";
-import axios from 'axios';
 import MovieForm from "../../components/MovieForm/MovieForm";
-
+import {saveMovie, MOVIE_ADD_SUCCESS} from "../../store/actions/movie-add";
+import {connect} from "react-redux";
 
 class MovieAdd extends Component {
     state = {
-        // сообщение об ошибке
         alert: null,
     };
 
-    // вывод сообщение об ошибке
     showErrorAlert = (error) => {
         this.setState(prevState => {
             let newState = {...prevState};
-            newState.alert = {type: 'danger', message: `Фильм не добавлен!`};
+            newState.alert = {type: 'danger', message: `Фильм не добавлен`};
             return newState;
         });
     };
 
-    // сборка данных для запроса
-    gatherFormData = (movie) => {
-        let formData = new FormData();
-        Object.keys(movie).forEach(key => {
-            const value = movie[key];
-            if (value) {
-                if (Array.isArray(value)) {
-                    // для полей с несколькими значениями (категорий)
-                    // нужно добавить каждое значение отдельно
-                    value.forEach(item => formData.append(key, item));
-                } else {
-                    formData.append(key, value);
-                }
-            }
-        });
-        return formData;
-    };
-
-    // обработчик отправки формы
     formSubmitted = (movie) => {
-        // сборка данных для запроса
-        const formData = this.gatherFormData(movie);
-
-        // отправка запроса
-        return axios.post(MOVIES_URL, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': 'Token ' + localStorage.getItem('auth-token')  // сюда
+        const {auth} = this.props;
+        return this.props.saveMovie(movie, auth.token).then(result => {
+            if (result.type === MOVIE_ADD_SUCCESS) {
+                this.props.history.push('/movies/' + result.movie.id);
             }
-        })
-            .then(response => {
-                // при успешном создании response.data содержит данные фильма
-                const movie = response.data;
-                console.log(movie);
-                // если всё успешно, переходим на просмотр страницы фильма с id,
-                // указанным в ответе
-                this.props.history.replace('/movies/' + movie.id);
-            })
-            .catch(error => {
-                console.log(error);
-                // error.response - ответ с сервера
-                // при ошибке 400 в ответе с сервера содержатся ошибки валидации
-                // пока что выводим их в консоль
-                console.log(error.response);
-                this.showErrorAlert(error.response);
-            });
+        }).catch(error => {
+            console.log(error);
+            console.log(error.response);
+            this.showErrorAlert(error.response);
+        });
     };
 
     render() {
@@ -76,5 +38,16 @@ class MovieAdd extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        movieAdd: state.movieAdd,
+        auth: state.auth
+    }
+};
+const mapDispatchProps = dispatch => {
+    return {
+        saveMovie: (movie) => dispatch(saveMovie(movie))
+    }
+};
 
-export default MovieAdd;
+export default connect(mapStateToProps, mapDispatchProps)(MovieAdd);

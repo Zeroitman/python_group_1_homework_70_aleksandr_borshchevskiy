@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import axios from 'axios';
 import HallForm from '../../components/HallForm/HallForm';
-
+import {saveHall, HALL_ADD_SUCCESS} from "../../store/actions/hall-add";
+import {connect} from "react-redux";
 
 class HallAdd extends Component {
     state = {
@@ -16,35 +16,17 @@ class HallAdd extends Component {
         });
     };
 
-    gatherFormData = (hall) => {
-        let formData = new FormData();
-        Object.keys(hall).forEach(key => {
-            const value = hall[key];
-            if (value) {
-                formData.append(key, value);
-            }
-        });
-        return formData;
-    };
-
     formSubmitted = (hall) => {
-        const formData = this.gatherFormData(hall);
-        return axios.post('halls/', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': 'Token ' + localStorage.getItem('auth-token')
+        const {auth} = this.props;
+        return this.props.saveHall(hall, auth.token).then(result => {
+            if (result.type === HALL_ADD_SUCCESS) {
+                this.props.history.push('/halls/' + result.hall.id);
             }
-        })
-            .then(response => {
-                const hall = response.data;
-                console.log(hall);
-                this.props.history.replace('/halls/' + hall.id);
-            })
-            .catch(error => {
-                console.log(error);
-                console.log(error.response);
-                this.showErrorAlert(error.response);
-            });
+        }).catch(error => {
+            console.log(error);
+            console.log(error.response);
+            this.showErrorAlert(error.response);
+        });
     };
 
     render() {
@@ -56,5 +38,16 @@ class HallAdd extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        hallAdd: state.hallAdd,
+        auth: state.auth
+    }
+};
+const mapDispatchProps = dispatch => {
+    return {
+        saveHall: (hall) => dispatch(saveHall(hall))
+    }
+};
 
-export default HallAdd;
+export default connect(mapStateToProps, mapDispatchProps)(HallAdd);

@@ -3,12 +3,16 @@ import {Redirect, Route} from 'react-router'
 import {connect} from "react-redux";
 
 const AuthRoute = (props) => {
-    if(props.auth.id) {return <Route {...props} />} else {
-        return <Redirect to={{
-            pathname: "/login",
-            state: {next: props.location}
-        }}/>
+    if (props.app.loading) {
+        return <p>Loading, please wait.</p>
     }
+    if (props.auth.id) {
+        return <Route {...props} />
+    }
+    return <Redirect to={{
+        pathname: "/login",
+        state: {next: props.location}
+    }}/>
 };
-const mapStateToProps = state => ({auth: state.auth});
+const mapStateToProps = state => ({auth: state.auth, app: state.app});
 export default connect(mapStateToProps)(AuthRoute);
