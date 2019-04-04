@@ -18,12 +18,11 @@ class Login extends Component {
         event.preventDefault();
         const {username, password, first_name, email, last_name} = this.state.credentials;
         this.props.login(username, password, first_name, email, last_name).then((result) => {
-            if (result.type === LOGIN_SUCCESS)
-                if (this.props.location.state) {
-                    this.props.history.replace(this.props.location.state.next);
-                } else {
-                    this.props.history.goBack();
-                }
+            if (result.type === LOGIN_SUCCESS) {
+                this.props.history.replace('/');
+            } else {
+                this.props.history.replace('/login')
+            }
         });
     };
 

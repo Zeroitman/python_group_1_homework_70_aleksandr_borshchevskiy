@@ -12,6 +12,6 @@ const instance = axios.create({
 });
 const TOKEN_LOGIN_URL = '/token-login/';
 
-export {MOVIES_URL, CATEGORIES_URL, SHOWS_URL, BASE_URL, HALLS_URL, LOGIN_URL, REGISTER_URL,TOKEN_LOGIN_URL}
+export {MOVIES_URL,CATEGORIES_URL, SHOWS_URL, BASE_URL, HALLS_URL, LOGIN_URL, REGISTER_URL,TOKEN_LOGIN_URL}
 
 export default instance;
